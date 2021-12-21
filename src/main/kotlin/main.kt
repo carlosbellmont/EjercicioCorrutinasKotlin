@@ -17,65 +17,64 @@ var hacha = Mutex()
 
 fun main() {
     comenzar()
-    Thread.sleep(80000)
 }
 
 
 fun comenzar(){
-    GlobalScope.launch {
-        coroutineScope {
-            // Amigo A
-            launch {
-                repeat(CUBOS_NECESARIOS) {
-                    irAPorAgua("Amigo A")
-                    descansar(1000, "Amigo A")
-                }
-            }
-            // Amigo B
-            launch {
-                repeat(LENA_NECESARIA){
-                    irAPorLena("Amigo B")
-                    descansar(3000, "Amigo B")
-                }
-            }
-            // Amigo C
-            launch {
-                irAPorRamas("Amigo C")
-                irACazar("Amigo C")
-            }
+    runBlocking {
 
+        // Amigo A
+        launch {
+            repeat(CUBOS_NECESARIOS) {
+                irAPorAgua("Amigo A")
+                descansar(1000, "Amigo A")
+            }
         }
-        if (cubosActuales == CUBOS_NECESARIOS && lenaActual == LENA_NECESARIA && ramasActuales == RAMA_NECESARIA && comidaActual == COMIDA_NECESARIA){
-            println("Barca construida y aprovisionada con exito")
-        } else {
-            println("Algo ha fallado")
+        // Amigo B
+        launch {
+            repeat(LENA_NECESARIA){
+                irAPorLena("Amigo B")
+                descansar(3000, "Amigo B")
+            }
         }
+        // Amigo C
+        launch {
+            irAPorRamas("Amigo C")
+            irACazar("Amigo C")
+        }
+
+    }
+    if (cubosActuales == CUBOS_NECESARIOS && lenaActual == LENA_NECESARIA && ramasActuales == RAMA_NECESARIA && comidaActual == COMIDA_NECESARIA){
+        println("Barca construida y aprovisionada con éxito")
+    } else {
+        println("Algo ha fallado")
     }
 }
 
+
 suspend fun irACazar(nombre : String) {
-    println("El amigo $nombre va a Cazar")
+    println("El amigo $nombre quiere ir a cazar pero necesita el hacha")
     hacha.withLock {
-        println("El amigo $nombre coge el hacha")
+        println("El amigo $nombre coge el hacha para ir a cazar")
         delay(4000)
         comidaActual++
-        println("El amigo $nombre deja el hacha")
+        println("El amigo $nombre deja el hacha después de cazar")
     }
-    println("El amigo $nombre va a por leña")
+    println("El amigo $nombre vuelve de la caza")
 }
 
 suspend fun descansar(tiempo : Long, nombre : String) {
-    println("El amigo $nombre, quiere descansar")
+    println("El amigo $nombre quiere descansar pero necesita la hamaca")
     hamaca.withLock {
-        println("El amigo $nombre, se tumba en la hamaca")
+        println("El amigo $nombre se tumba en la hamaca")
         delay(tiempo)
-        println("El amigo $nombre, se levanta de la hamaca")
+        println("El amigo $nombre se levanta de la hamaca")
     }
-    println("El amigo $nombre, deja de descansar")
+    println("El amigo $nombre vuelve de descansar")
 }
 
 suspend fun irAPorLena(nombre : String) {
-    println("El amigo $nombre va a por leña")
+    println("El amigo $nombre va a por leña pero necesita el hacha")
     hacha.withLock {
         println("El amigo $nombre coge el hacha")
         delay(5000)
